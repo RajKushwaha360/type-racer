@@ -1,0 +1,37 @@
+<p>Type hello world!</p>
+
+<button
+  [ngStyle]="{ 'background-color': isActive ? 'green' : 'red' }"
+  style="color: white"
+  mat-raised-button
+  type="button"
+  (click)="isActive = !isActive"
+>
+  Toggle active
+</button>
+
+<button mat-raised-button type="button" (click)="onResetClicked()">Reset</button>
+<div>
+  @for ( item of typeTempString;track $index){
+
+  <!-- <div>{{ $index }}</div> -->
+  <div
+    [ngStyle]="{ color: textColorArray[$index] != null ? textColorArray[$index] : 'yellow' }"
+    style="background-color: black"
+    class="inline-text"
+    (keypress)="onKeyPress($event)"
+  >
+    @if(currentIndex == $index){
+    <span class="is-current-letter"></span>
+
+    }
+    {{ item ?? '.' }}
+  </div>
+  }
+</div>
+
+@if(isFinished()){
+
+<div>Current wpm: {{ typingSpeedWPM() }}</div>
+
+}

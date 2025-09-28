@@ -1,0 +1,15 @@
+.inline-text{
+  display: inline !important;
+}
+
+.is-current-letter{
+  border-left: 1px solid yellow;
+  animation: blink 1s steps(1) infinite;
+
+}
+  
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
