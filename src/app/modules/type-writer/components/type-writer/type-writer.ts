@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnInit, Output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { TypeWriterService } from '../../services/type-writer';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-type-writer',
@@ -21,14 +23,22 @@ export class TypeWriter implements OnInit {
   isFinished = signal(false);
   currentWordCount = 0;
   typingSpeedWPM = signal(0);
+  @Output() playerProgress = new EventEmitter<{ progress: number; wpm: number }>();
 
   textColorArray: string[] = [];
 
+  constructor(private typeWriterService: TypeWriterService) {}
+
   ngOnInit(): void {
-    console.log('Init values: ' + this.isFinished());
+    this.fetchData();
+
     this.typeTempString = this.typeString.replaceAll(' ', '•');
 
     this.currentWordCount = this.typeString.split(' ').length;
+  }
+
+  fetchData() {
+    this.typeString = this.typeWriterService.getRandomText();
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -44,13 +54,21 @@ export class TypeWriter implements OnInit {
       this.startTimeStamp = Date.now();
     }
 
-    if (event.code.substring(0, 3) == 'Key' || event.code == 'Space') {
+    console.log(event.code);
+
+    if (
+      event.code.substring(0, 3) == 'Key' ||
+      event.code == 'Space' ||
+      event.code == 'Period' ||
+      event.code == 'Comma'
+    ) {
       this.lastKeyPressed = event.key;
       this.updatedCurrentIndex();
     }
   }
 
   onResetClicked() {
+    this.isTypingStarted = false;
     this.currentIndex = 0;
     this.textColorArray = [];
     this.lastKeyPressed = '';
@@ -91,6 +109,9 @@ export class TypeWriter implements OnInit {
     let secDiff = milliDiff / 1000;
     this.typingSpeedWPM.set((this.currentWordCount * 60) / secDiff);
   }
+
+  // min = sec / 60
+  // sec = min * 60
 
   onKeyPress(event: KeyboardEvent) {
     console.log(event);

@@ -1,0 +1,32 @@
+<form [formGroup]="userNameForm">
+  <mat-form-field>
+    <mat-label>User Name</mat-label>
+    <input matInput placeholder="Please enter your name" formControlName="name" />
+  </mat-form-field>
+</form>
+
+<button mat-flat-button (click)="joinRandomRoom()">Join Random Room</button>
+
+@if (isRoomJoined()){
+
+  <div>Waiting for other players to join</div>
+
+<div>Room: {{ currentRoomId }}</div>
+
+<div>Players:</div>
+@if (playerJoined$ | async; as data) { @for(player of data.players;track $index){
+<div>{{ player.userName }}</div>
+} }
+<!--
+<div>Room logs:</div>
+
+@for(log of (logList$ | async);track $index){
+<div>{{ log }}</div>
+ } -->
+
+
+}
+
+@if(isCompetitionStarted()){
+  <app-type-writer (playerProgress)="onPlayerProgress($event)"></app-type-writer>
+}
